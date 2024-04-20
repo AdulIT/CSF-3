@@ -59,7 +59,7 @@ class LinkedList
             return this
         }
 
-        // если удаление с середины списка
+        // если удаление с середины списка и конца
         while(currentNode)
         {
             if (currentNode.value === value)
@@ -80,8 +80,32 @@ class LinkedList
             currentNode = currentNode.next
         }
 
-        console.log("Node not found in the list.");
+        console.log("Node not found in the linked list.");
         return this;
+    }
+
+    [Symbol.iterator]()
+    {
+        let current = this.head
+        return {
+            next()
+            {
+                if (!current)
+                {
+                    return {done: true}
+                }
+                else
+                {
+                    const tmp = current
+                    current = current.next
+
+                    return {
+                        value: tmp,
+                        done: false
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -92,14 +116,20 @@ list.add(2);
 list.add(3);
 list.add(5);
 
-console.log(list.head.value);           // 1
+// console.log(list.head.value);           // 1
 // console.log(list.tail.value);            // 5
 // console.log(list.head.next.value);      // 2
 // console.log(list.head.next.prev.value); // 1
 
-list.deleteNode(6)
+// list.deleteNode(6)
 
 // console.log(list.head.value);           // 1
-console.log(list.tail.value);            // 5
+// console.log(list.tail.value);            // 5
 // console.log(list.head.next.value);      // 2
 // console.log(list.head.next.prev.value); // 1
+list.add(105);
+list.deleteNode(3);
+
+for (const value of list) {
+    console.log(value);
+}
