@@ -1,58 +1,79 @@
 "use strict";
 class BCD {
-    numbers = []
-    mask = 0b1111;
-    bcd = 0;
     bcdDigit = 4;
-    maxBcdDigit = 7;
+    maxBcdDigitNumber = 7;
+    len = 0;
 
     // Во избежание переполнение Double чисел на вход используем BigInt
     constructor(num) {
         this.num = num
-        
-        // console.log(`Numbers array items in binary: ${this.numbers.forEach(number => console.log(number))} \n`);
+        this.numbers = []
     }
+    
     // Во избежание переполнение Double чисел на выход используем BigInt
     valueOf() {
-        let len = 0
+        // let len = 0
+        let currentNum = parseInt(this.num)
+        let count = this.countDigits(currentNum)
+        // console.log(count);
+    
         let movedDigit = 0n
-        while (this.num > 0n)
+        while (this.num > 0)
         {
             let digit = this.num % 10n
-            if (len > this.maxBcdDigit - 1)
+            if (this.len > this.maxBcdDigitNumber - 1)
             {
                 // this.numbers.push(movedDigit)
                 this.numbers.push(binary(Number(movedDigit)))
                 // console.log(`Numbers array: ${this.numbers}`);
                 movedDigit = 0n
-                len = 0
+                this.len = 0
             }
-            movedDigit |= digit << BigInt(this.bcdDigit * len)
+            movedDigit |= digit << BigInt(this.bcdDigit * this.len)
             
             this.num = this.num / 10n
-            len++
+            this.len++
         }
         // this.numbers.push(movedDigit)
         this.numbers.push(binary(Number(movedDigit)))
         // console.log(`Result: ${binary(Number(movedDigit))}`);
         // console.log(`Numbers array: ${this.numbers}`);
         return this.numbers
-        // ...
-        // temp return
-        // return BigInt(455)
     }
     // Возвращает разряд BCD числа по заданной позиции.
     // Отрицательная позиция означает разряд "с конца".
     get(pos) {
-        // temp return
-        // return 4
+        console.log(this.len)
+
+    }
+
+    countDigits(n)
+    {
+        let count = 0
+
+        while(n > 0)
+        {
+            n = Math.floor(n / 10)
+            count++
+        }
+
+        return count
+    }
+
+    createMask(len, pos)
+    {
+        let r = ~0
+        r << 32 - len
+        r >>> 32 - pos
+        return r
     }
 }
 
 const n = new BCD(65536n);
 const n2 = new BCD(6553601200119n);
-console.log(n2.valueOf()); // 0b01100101010100110110 или 415030n
-// console.log(n.get(0)); // 6
+console.log(n.valueOf()); // 0b01100101010100110110 или 415030n
+console.log(n2.valueOf());
+console.log(n.get(0)); // 6
 // console.log(n.get(1)); // 5
 // console.log(n.get(-1)); // 6
 // console.log(n.get(-2)); // 3
